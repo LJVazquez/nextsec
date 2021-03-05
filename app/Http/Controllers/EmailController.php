@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Email;
+use App\Models\Domain;
 use Illuminate\Http\Request;
 
 class EmailController extends Controller
@@ -14,7 +15,7 @@ class EmailController extends Controller
      */
     public function index()
     {
-        //
+        return view('email.index', ['emails' => Email::all()]);
     }
 
     /**
@@ -24,7 +25,7 @@ class EmailController extends Controller
      */
     public function create()
     {
-        //
+        return view('email.create', ['domains' => Domain::all()]);
     }
 
     /**
@@ -35,7 +36,12 @@ class EmailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $email = new Email;
+        $email->name = $request->name;
+        $email->domain_id = $request->domain;
+        $email->save();
+
+        return redirect('/emails');
     }
 
     /**
@@ -46,7 +52,11 @@ class EmailController extends Controller
      */
     public function show(Email $email)
     {
-        //
+        return view('email.show', [
+            'email' => $email,
+            'domain' => $email->domain,
+            'user' => $email->domain->user
+        ]);
     }
 
     /**

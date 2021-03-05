@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Domain;
-use App\Models\User;
-use App\Models\Email;
 use Illuminate\Http\Request;
+use App\Models\User;
 
-class DomainController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +14,8 @@ class DomainController extends Controller
      */
     public function index()
     {
-        return view('domain.index', ['domains' => Domain::all()]);
+        // return User::all();
+        return view('user.index', ['users' => User::all()]);
     }
 
     /**
@@ -26,7 +25,7 @@ class DomainController extends Controller
      */
     public function create()
     {
-        return view('domain.create')->with('users', User::all());
+        //
     }
 
     /**
@@ -37,34 +36,27 @@ class DomainController extends Controller
      */
     public function store(Request $request)
     {
-        $domain = new Domain;
-        $domain->name = $request->name;
-        $domain->user_id = $request->user;
-        $domain->save();
-        return redirect('/domains');
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Domain  $domain
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Domain $domain)
+    public function show($id)
     {
-        return view('domain.show', [
-            'domain' => $domain,
-            'emails' => $domain->emails
-        ]);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Domain  $domain
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Domain $domain)
+    public function edit($id)
     {
         //
     }
@@ -73,10 +65,10 @@ class DomainController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Domain  $domain
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Domain $domain)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -84,10 +76,10 @@ class DomainController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Domain  $domain
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Domain $domain)
+    public function destroy($id)
     {
         //
     }

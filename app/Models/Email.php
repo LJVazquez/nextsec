@@ -11,6 +11,6 @@ class Email extends Model
 
     public function domain()
     {
-        return $this->belongsTo(Email::class);
+        return $this->belongsTo(Domain::class);
     }
 }
