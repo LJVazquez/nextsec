@@ -26,30 +26,6 @@ Route::get('index', function () {
     return view('index');
 });
 
-//////////////
-
-
-Route::get('/email', function () {
-    return view('mail');
-})->middleware('auth');
-
-Route::post('/email', function (Request $req) {
-    request()->validate(['email' => 'required|email']);
-
-    // Mail::to($req->email)
-    //     ->send(new ContactMe('tus remeras'));
-
-
-    request()->user()->notify(new Notificacion());
-
-    return redirect('/email')
-        ->with('message', 'Email enviado');
-})->middleware('auth');
-
-
-
-//////////////
-
 
 Route::resource('/users', 'App\Http\Controllers\UserController');
 Route::resource('/domains', 'App\Http\Controllers\DomainController');
