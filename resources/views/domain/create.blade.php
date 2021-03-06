@@ -9,14 +9,14 @@
             <input class="form-control" type="text" name="name" id="name" placeholder="Ej. google.com" required>
         </div>
 
-        <div class="form-group">
+        {{-- <div class="form-group">
             <label for="user">Usuario (este campo se borra final)</label>
             <select id="user" class="form-control" name="user">
                 @foreach ($users as $user)
                     <option value={{ $user->id }}>{{ $user->name }}</option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
         <button class="btn btn-primary mt-1" type="submit">Crear</button>
     </form>
 

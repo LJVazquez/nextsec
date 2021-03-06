@@ -26,7 +26,10 @@ Route::get('index', function () {
     return view('index');
 });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> login
 Route::resource('/users', 'App\Http\Controllers\UserController');
 Route::resource('/domains', 'App\Http\Controllers\DomainController');
 Route::resource('/emails', 'App\Http\Controllers\EmailController');
