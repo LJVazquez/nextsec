@@ -92,4 +92,11 @@ class EmailController extends Controller
     {
         //
     }
+
+    public function search(Request $request, Email $email)
+    {
+        $requester = $email->name . '@' . $email->domain->name;
+
+        return $request->header();
+    }
 }
