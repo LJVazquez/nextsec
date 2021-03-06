@@ -6,6 +6,7 @@ use App\Models\Domain;
 use App\Models\User;
 use App\Models\Email;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DomainController extends Controller
 {
@@ -26,7 +27,7 @@ class DomainController extends Controller
      */
     public function create()
     {
-        return view('domain.create')->with('users', User::all());
+        return view('domain.create');
     }
 
     /**
@@ -39,7 +40,7 @@ class DomainController extends Controller
     {
         $domain = new Domain;
         $domain->name = $request->name;
-        $domain->user_id = $request->user;
+        $domain->user_id = Auth::id();
         $domain->save();
         return redirect('/domains');
     }
@@ -89,6 +90,10 @@ class DomainController extends Controller
      */
     public function destroy(Domain $domain)
     {
-        //
+        $this->authorize('delete', $domain);
+
+        Domain::destroy($domain->id);
+
+        return redirect('/domains')->with('message', 'Dominio eliminado');
     }
 }

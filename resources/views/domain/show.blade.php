@@ -13,6 +13,14 @@
                 </li>
             @endforeach
         </ul>
+
+        @can('delete', $domain)
+            <form method="post" action="/domains/{{ $domain->id }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger mt-1">Borrar dominio</button>
+            </form>
+        @endcan
     </div>
 
 @endsection
