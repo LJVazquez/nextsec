@@ -19,6 +19,7 @@ Route::resource('/users', 'App\Http\Controllers\UserController');
 Route::resource('/domains', 'App\Http\Controllers\DomainController');
 Route::resource('/emails', 'App\Http\Controllers\EmailController');
 Route::post('/emails/{email}', 'App\Http\Controllers\EmailController@search');
+Route::get('/getFile/{file}', 'App\Http\Controllers\EmailController@getFile');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');

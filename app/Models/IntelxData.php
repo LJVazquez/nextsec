@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Email extends Model
+class IntelxData extends Model
 {
     use HasFactory;
 
@@ -14,8 +14,8 @@ class Email extends Model
         return $this->belongsTo(Domain::class);
     }
 
-    public function intelx()
+    public function email()
     {
-        return $this->hasMany(IntelxData::class);
+        return $this->belongsTo(Email::class);
     }
 }

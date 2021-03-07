@@ -18,4 +18,9 @@ class Domain extends Model
     {
         return $this->hasMany(Email::class);
     }
+
+    public function intelx()
+    {
+        return $this->hasMany(IntelxData::class);
+    }
 }

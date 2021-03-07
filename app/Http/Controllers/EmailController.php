@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Email;
 use App\Models\Domain;
+use App\Models\IntelxData;
 use Illuminate\Http\Request;
 use App\utilities\Intelx;
 
@@ -53,10 +54,15 @@ class EmailController extends Controller
      */
     public function show(Email $email)
     {
+        $intelxdata = IntelxData::where('email_id', $email->id)
+            ->orderBy('updated_at')
+            ->get();
+
         return view('email.show', [
             'email' => $email,
             'domain' => $email->domain,
-            'user' => $email->domain->user
+            'user' => $email->domain->user,
+            'intelxdata' => $intelxdata
         ]);
     }
 
@@ -91,16 +97,37 @@ class EmailController extends Controller
      */
     public function destroy(Email $email)
     {
-        //
+        $this->authorize('delete', $email);
+
+        Email::destroy($email->id);
+
+        return redirect('/emails')->with('message', 'Email eliminado');
     }
 
     public function search(Email $email)
     {
         $searchTerm = htmlspecialchars($email->name . '@' . $email->domain->name);
 
-        $intel = new Intelx();
+        $previousCount = IntelxData::where('email_id', $email->id)->count();
 
-        $intel->makeRequest($searchTerm);
-        $intel->getResults();
+        $intelx = new Intelx();
+        $intelx->makeRequest($searchTerm);
+        $intelx->getResults();
+        $intelx->storeResults($email);
+
+        // $intel->getFile();
+
+        $newCount = IntelxData::where('email_id', $email->id)->count();
+        $totalCount = $newCount - $previousCount;
+
+        return redirect("/emails/$email->id")->with('count', $totalCount);
+    }
+
+    public function getFile(IntelxData $file)
+    {
+        // $this->authorize('getFile', $file);
+
+        $intelx = new Intelx();
+        return $intelx->getFile($file);
     }
 }

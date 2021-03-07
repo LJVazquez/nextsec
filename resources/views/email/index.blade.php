@@ -13,6 +13,9 @@
                 </li>
             @endforeach
         </ul>
+        @if (session('message'))
+            <p class="text-success">{{ session('message') }}</p>
+        @endif
         <a href="/emails/create" class="btn btn-primary mt-1">Crear</a>
 
     </div>
