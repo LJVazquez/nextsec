@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Email;
 use App\Models\Domain;
 use Illuminate\Http\Request;
+use App\utilities\Intelx;
 
 class EmailController extends Controller
 {
@@ -93,10 +94,13 @@ class EmailController extends Controller
         //
     }
 
-    public function search(Request $request, Email $email)
+    public function search(Email $email)
     {
-        $requester = $email->name . '@' . $email->domain->name;
+        $searchTerm = htmlspecialchars($email->name . '@' . $email->domain->name);
 
-        return $request->header();
+        $intel = new Intelx();
+
+        $intel->makeRequest($searchTerm);
+        $intel->getResults();
     }
 }
