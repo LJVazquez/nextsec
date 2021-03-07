@@ -107,16 +107,16 @@ class Intelx
     public function getFile(IntelxData $file)
     {
 
-        //? preview
-        // $response = $this->client->request('GET', 'file/preview', [
-        //     'query' => [
-        //         'c' => 1,
-        //         'm' => 1,
-        //         'f' => 0, //if si es imagen
-        //         'sid' => '83da36815decd67807b2e811251bcf83efb3cbfcc304312e7753af28f1b1c9239dd798666b6edd5e94068d1b4dbfde907bd04a03f88ce943c1f515bf1e74621b',
-        //         'b' => 'pastes',
-        //     ]
-        // ]);
+        // ? preview
+        $response = $this->client->request('GET', 'file/preview', [
+            'query' => [
+                'c' =>  $file->type,
+                'm' =>  $file->media,
+                'f' => 0, //if si es imagen
+                'sid' => $file->storageid,
+                'b' => $file->bucket,
+            ]
+        ]);
 
         // // ? view
         // $response = $this->client->request('GET', 'file/view', [
@@ -127,15 +127,15 @@ class Intelx
         //     ]
         // ]);
 
-        // ? read
-        $response = $this->client->request('GET', 'file/read', [
-            'query' => [
-                'type' => 0, //0 raw binary, 1 raw con disposicion opcional
-                'storageid' => $file->storageid,
-                'systemid' => $file->systemid,
-                'bucket' => $file->bucket, //opcional
-            ]
-        ]);
+        // // ? read
+        // $response = $this->client->request('GET', 'file/read', [
+        //     'query' => [
+        //         'type' => 0, //0 raw binary, 1 raw con disposicion opcional
+        //         'storageid' => $file->storageid,
+        //         'systemid' => $file->systemid,
+        //         'bucket' => $file->bucket, //opcional
+        //     ]
+        // ]);
 
         return $response->getBody()->getContents();
     }

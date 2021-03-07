@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                        ">
+                                                                                                                                                                            ">
 @endsection
 
 @section('content')
@@ -25,6 +25,7 @@
         <div class="row">
             <div class="col-12">
                 <h3>Resultados de la busqueda</h3>
+                <p class="fw-lighter">Usando modalidad preview por limitaciones de la API free</p>
                 @if (session('count'))
                     <p class="text-success">{{ session('count') }} resultados nuevos.</p>
                 @endif

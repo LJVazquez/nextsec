@@ -107,8 +107,8 @@ class EmailController extends Controller
     public function search(Email $email)
     {
         $searchTerm = htmlspecialchars($email->name . '@' . $email->domain->name);
-
         $previousCount = IntelxData::where('email_id', $email->id)->count();
+
 
         $intelx = new Intelx();
         $intelx->makeRequest($searchTerm);
