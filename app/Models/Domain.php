@@ -23,4 +23,9 @@ class Domain extends Model
     {
         return $this->hasMany(IntelxData::class);
     }
+
+    public function hunterDomains()
+    {
+        return $this->hasMany(HunterDomainData::class);
+    }
 }

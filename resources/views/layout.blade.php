@@ -14,11 +14,11 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container"><a class="navbar-brand" href="/">NextSec</a></div>
     </nav>
 
-    <div class="container">
+    <div class="container-fluid">
         @yield('content')
     </div>
 

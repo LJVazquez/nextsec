@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                            ">
+                                                                                                                                                                                                                            ">
 @endsection
 
 @section('content')
@@ -16,7 +16,8 @@
     <div class="container">
         <form action="/emails/{{ $email->id }}" method="post">
             @csrf
-            <button class="btn btn-primary" type="submit">Buscar</button>
+            <h2 class="text-primary ">Intelligence X</h2>
+            <button class="btn btn-primary " type="submit">Actualizar busqueda</button>
         </form>
     </div>
     <div class="container" id="results">
@@ -27,7 +28,7 @@
                 <h3>Resultados de la busqueda</h3>
                 <p class="fw-lighter">Usando modalidad preview por limitaciones de la API free</p>
                 @if (session('count'))
-                    <p class="text-success">{{ session('count') }} resultados nuevos.</p>
+                    <p class="text-success">{{ session('count') }}</p>
                 @endif
                 <div class="table-responsive">
                     <table id="search-results" class="table table-light table-striped table-bordered">

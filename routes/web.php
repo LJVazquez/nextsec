@@ -16,10 +16,16 @@ Route::get('index', function () {
 });
 
 Route::resource('/users', 'App\Http\Controllers\UserController');
+
 Route::resource('/domains', 'App\Http\Controllers\DomainController');
+Route::post('/domains/{domain}', 'App\Http\Controllers\DomainController@intelxSearch');
+Route::get('/domain-search/{domain}', 'App\Http\Controllers\DomainController@hunterDomainSearch');
+
+
 Route::resource('/emails', 'App\Http\Controllers\EmailController');
-Route::post('/emails/{email}', 'App\Http\Controllers\EmailController@search');
-Route::get('/getFile/{file}', 'App\Http\Controllers\EmailController@getFile');
+Route::post('/emails/{email}', 'App\Http\Controllers\EmailController@intelxSearch');
+
+Route::get('/getFile/{file}', 'App\utilities\Intelx@getFile');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');

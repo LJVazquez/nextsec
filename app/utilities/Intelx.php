@@ -106,7 +106,6 @@ class Intelx
 
     public function getFile(IntelxData $file)
     {
-
         // ? preview
         $response = $this->client->request('GET', 'file/preview', [
             'query' => [

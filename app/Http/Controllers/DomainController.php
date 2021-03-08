@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Domain;
-use App\Models\User;
-use App\Models\Email;
+use App\Models\hunterDomainData;
+use App\Models\IntelxData;
+use App\utilities\Hunter;
+use App\utilities\Intelx;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,9 +55,16 @@ class DomainController extends Controller
      */
     public function show(Domain $domain)
     {
+        $intelxData = $domain->intelx->sortBy('updated_at');
+
+        $hunterDomainData = $domain->hunterDomains->sortBy('updated_at');
+
         return view('domain.show', [
             'domain' => $domain,
-            'emails' => $domain->emails
+            'emails' => $domain->emails,
+            'user' => $domain->user,
+            'intelxdata' => $intelxData,
+            'hunterdomaindata' => $hunterDomainData
         ]);
     }
 
@@ -95,5 +104,43 @@ class DomainController extends Controller
         Domain::destroy($domain->id);
 
         return redirect('/domains')->with('message', 'Dominio eliminado');
+    }
+
+    public function intelxSearch(Domain $domain)
+    {
+        $searchTerm = htmlspecialchars($domain->name);
+        $previousCount = IntelxData::where('domain_id', $domain->id)->count();
+
+        $intelx = new Intelx();
+        $intelx->makeRequest($searchTerm);
+        $intelx->getResults();
+        $intelx->storeResults($domain);
+
+        $newCount = IntelxData::where('domain_id', $domain->id)->count();
+        $totalCount = $newCount - $previousCount;
+
+        if ($totalCount <= 0) {
+            return redirect("/domains/$domain->id")->with('count', 'Sin resultados nuevos');
+        } else {
+            return redirect("/domains/$domain->id")->with('count', "$totalCount resultados nuevos.");
+        }
+    }
+
+    public function hunterDomainSearch(Domain $domain)
+    {
+        $previousCount = $domain->hunterDomains->count();
+
+        $hunter = new Hunter();
+        $hunter->domainSearch($domain->name);
+        $hunter->storeResults($domain);
+
+        $newCount = $domain->hunterDomains->count();
+        $totalCount = $newCount - $previousCount;
+
+        if ($totalCount <= 0) {
+            return redirect("/domains/$domain->id")->with('domain-count', 'Sin resultados nuevos');
+        } else {
+            return redirect("/domains/$domain->id")->with('domain-count', "$totalCount resultados nuevos.");
+        }
     }
 }

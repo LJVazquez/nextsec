@@ -104,30 +104,23 @@ class EmailController extends Controller
         return redirect('/emails')->with('message', 'Email eliminado');
     }
 
-    public function search(Email $email)
+    public function intelxSearch(Email $email)
     {
         $searchTerm = htmlspecialchars($email->name . '@' . $email->domain->name);
         $previousCount = IntelxData::where('email_id', $email->id)->count();
-
 
         $intelx = new Intelx();
         $intelx->makeRequest($searchTerm);
         $intelx->getResults();
         $intelx->storeResults($email);
 
-        // $intel->getFile();
-
         $newCount = IntelxData::where('email_id', $email->id)->count();
         $totalCount = $newCount - $previousCount;
 
-        return redirect("/emails/$email->id")->with('count', $totalCount);
-    }
-
-    public function getFile(IntelxData $file)
-    {
-        // $this->authorize('getFile', $file);
-
-        $intelx = new Intelx();
-        return $intelx->getFile($file);
+        if ($totalCount <= 0) {
+            return redirect("/emails/$email->id")->with('count', 'Sin resultados nuevos');
+        } else {
+            return redirect("/emails/$email->id")->with('count', "$totalCount resultados nuevos.");
+        }
     }
 }
