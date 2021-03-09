@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ">
 @endsection
 
 @section('content')
@@ -21,13 +21,16 @@
         <div class="container">
             <div class="row">
                 <h3>Emails asociados al dominio</h3>
+                @if (session('domain-count'))
+                    <p class="text-success">{{ session('domain-count') }}</p>
+                @endif
                 <div class="table-responsive">
                     <table id="hunter-domain-results" class="table table-light table-striped table-bordered">
                         <thead class="thead-light">
                             <tr>
                                 <th>Email</th>
                                 <th>Datos personales</th>
-                                <th>Tipo</th>
+                                <th>Verificado</th>
                                 <th>Fuentes</th>
                                 <th>Agregar email</th>
                             </tr>
@@ -38,17 +41,19 @@
                                     <td>{{ $data->email }}</td>
                                     <td>{{ !$data->first_name && !$data->last_name ? 'Sin datos' : "$data->first_name $data->last_name" }}
                                     </td>
-                                    <td>{{ $data->type }}</td>
+                                    <td>Agregar</td>
                                     <td>
-                                        <div style="height: 50px; overflow-y: scroll;">
-                                            <ul>
-                                                @foreach (explode('|', $data->sources) as $source)
-                                                    <li>
-                                                        {{ $source }}
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
+                                        @if ($data->sources)
+                                            <div style="height: 50px; overflow-y: scroll;">
+                                                <ul>
+                                                    @foreach (explode('|', $data->sources) as $source)
+                                                        <li>
+                                                            {{ $source }}
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
                                     </td>
                                     <td><button class="btn btn-primary" type="button">Agregar</button></td>
                                 </tr>
@@ -61,6 +66,69 @@
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container-fluid bg-light py-4 mb-4">
+        <div class="container">
+            <div class="row">
+                <h4>Buscar email por datos personales</h4>
+                @if (session('person') === 'no esta')
+                    <p class="text-danger">Persona no encontrada</p>
+                @endif
+                @if (session('person'))
+                    <p class="text-success">Persona Encontrada.</p>
+                @endif
+                @if (session('person'))
+                    <div class="table-responsive">
+                        <table id="hunter-person-results" class="table table-light table-striped table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Datos personales</th>
+                                    <th>Fuentes</th>
+                                    <th>Verificado</th>
+                                    <th>Asociar mail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td>{{ session('person')['email'] }}</td>
+                                <td>{{ session('person')['first_name'] }}</td>
+                                <td>
+                                    <div style="height: 50px; overflow-y: scroll;">
+                                        <ul>
+                                            @foreach (session('person')['sources'] as $source)
+                                                <li>
+                                                    {{ $source }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>Agregar</td>
+                                <td><button class="btn btn-primary" type="button">Asociar</button></td>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+                <form method="get" action="/person-search/{{ $domain->id }}">
+                    <div class="row">
+                        @csrf
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <input class="form-control" type="text" name="first_name" id="first_name" placeholder="Nombre"
+                                required>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Apellido"
+                                required>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <button class="btn btn-primary" type="submit">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 

@@ -135,12 +135,21 @@ class DomainController extends Controller
         $hunter->storeResults($domain);
 
         $newCount = $domain->hunterDomains->count();
+
         $totalCount = $newCount - $previousCount;
 
         if ($totalCount <= 0) {
-            return redirect("/domains/$domain->id")->with('domain-count', 'Sin resultados nuevos');
+            return redirect("/domains/$domain->id");
         } else {
-            return redirect("/domains/$domain->id")->with('domain-count', "$totalCount resultados nuevos.");
+            return redirect("/domains/$domain->id")->wit('domain-count', "$totalCount resultados nuevos.");
         }
+    }
+
+    public function hunterPersonSearch(Domain $domain, Request $request)
+    {
+        $hunter = new Hunter();
+        $hunter->personSearch($domain->name, $request);
+        $personFound = $hunter->storePerson($domain);
+        return redirect("/domains/$domain->id")->with('person', $personFound);
     }
 }

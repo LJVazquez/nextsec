@@ -5,12 +5,14 @@ namespace App\utilities;
 use App\Models\Domain;
 use App\Models\HunterDomainData;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 
 class Hunter
 {
 
     private $searchOptions;
     private $searchResults;
+    private $personResults;
     private $client;
 
     public function __construct($optionalParameters = null)
@@ -63,6 +65,49 @@ class Hunter
                 $hunterData->save();
             }
         }
+    }
+
+    public function personSearch($searchTerm, Request $request)
+    {
+        do {
+            $response = $this->client->request('GET', 'v2/email-finder', [
+                'query' => [
+                    'domain' => $searchTerm,
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
+                ]
+            ]);
+        } while ($response->getStatusCode() !== 200);
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $this->personResults = $json['data'];
+    }
+
+    public function storePerson(Domain $domain)
+    {
+        $dataCheck = HunterDomainData::where('email', $this->personResults['email'])
+            ->first();
+
+        if ($dataCheck === null || $dataCheck->domain_id !== $domain->id) {
+
+            $sourcesArr = array_map(function ($elem) {
+                return $elem['uri'];
+            }, $this->personResults['sources']);
+            $sources = implode('|', $sourcesArr);
+
+            $hunterData = new HunterDomainData();
+            $hunterData->email = $this->personResults['email'];
+            $hunterData->first_name = $this->personResults['first_name'];
+            $hunterData->last_name = $this->personResults['last_name'];
+            if ($sources !== '') {
+                $hunterData->sources = $sources;
+            }
+            $hunterData->domain_id = $domain->id;
+            $hunterData->save();
+        }
+
+        return $this->personResults;
     }
 
     // public function getResults()

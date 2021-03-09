@@ -20,6 +20,7 @@ Route::resource('/users', 'App\Http\Controllers\UserController');
 Route::resource('/domains', 'App\Http\Controllers\DomainController');
 Route::post('/domains/{domain}', 'App\Http\Controllers\DomainController@intelxSearch');
 Route::get('/domain-search/{domain}', 'App\Http\Controllers\DomainController@hunterDomainSearch');
+Route::get('/person-search/{domain}', 'App\Http\Controllers\DomainController@hunterPersonSearch');
 
 
 Route::resource('/emails', 'App\Http\Controllers\EmailController');
