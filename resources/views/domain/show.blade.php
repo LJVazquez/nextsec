@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
 @endsection
 
 @section('content')
@@ -54,17 +54,21 @@
                                     <td class="{{ $data->confidence > 70 ? 'text-success' : 'text-warning' }}">
                                         {{ $data->confidence }}%</td>
                                     <td>
-                                        @if ($data->sources)
-                                            <div style="height: 50px; overflow-y: scroll;">
-                                                <ul>
-                                                    @foreach (explode('|', $data->sources) as $source)
+                                        <div style="height: 50px; overflow-y: scroll;">
+                                            <ul>
+                                                @if (json_decode($data->sources) !== [])
+                                                    @foreach (json_decode($data->sources) as $source)
                                                         <li>
-                                                            {{ $source }}
+                                                            <a class="text-decoration-none"
+                                                                href="{{ $source }}">{{ $source }}</a>
                                                         </li>
                                                     @endforeach
-                                                </ul>
-                                            </div>
-                                        @endif
+                                                @else
+                                                    <p class="text-warning">Sin fuentes</p>
+                                                @endif
+                                            </ul>
+                                        </div>
+
                                     </td>
                                     <td class="d-flex justify-content-around">
                                         <form action="/asociate-hunter-data/{{ $data->id }}" method="post">
@@ -134,17 +138,18 @@
                                 <td>{{ $person->verified ? $person->verified : 'No' }}</td>
                                 <td>{{ $person->confidence ? $person->confidence : '0' }}</td>
                                 <td>
-                                    @if ($person->sources)
-                                        <div style="height: 50px; overflow-y: scroll;">
-                                            <ul>
-                                                @foreach ($person->sources as $source)
+                                    <div style="height: 50px; overflow-y: scroll;">
+                                        <ul>
+                                            @if (json_decode($person->sources) !== [])
+                                                @foreach (json_decode($person->sources) as $source)
                                                     <li>
                                                         {{ $source }}
                                                     </li>
                                                 @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
+                                            @else
+                                                <p class="text-warning">Sin fuentes</p>
+                                            @endif
+                                        </ul>
                                 </td>
                                 <td>
                                     <form action="/person-save/{{ $domain->id }}" method="post">

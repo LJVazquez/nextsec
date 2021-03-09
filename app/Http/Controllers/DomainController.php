@@ -58,7 +58,7 @@ class DomainController extends Controller
     {
         $intelxData = $domain->intelx->sortBy('updated_at');
         $hunterData = $domain->hunterDomains->sortBy('updated_at');
-        $person = LastPersonChecked::first() ? LastPersonChecked::first() : false;
+        $person = LastPersonChecked::where('domain_id', $domain->id)->first();
 
         return view('domain.show', [
             'domain' => $domain,

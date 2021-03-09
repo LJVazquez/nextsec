@@ -47,7 +47,6 @@ class Hunter extends Controller
     public function storeResults(Domain $domain)
     {
         foreach ($this->searchResults as $email) {
-
             $dataCheck = HunterData::where('email', $email['value'])
                 ->first();
 
@@ -56,7 +55,8 @@ class Hunter extends Controller
                 $sourcesArr = array_map(function ($elem) {
                     return $elem['uri'];
                 }, $email['sources']);
-                $sources = implode('|', $sourcesArr);
+
+                $sources = json_encode($sourcesArr);
 
                 $hunterData = new HunterData();
                 $hunterData->email = $email['value'];
@@ -87,14 +87,13 @@ class Hunter extends Controller
         $json = json_decode($response->getBody()->getContents(), true);
         $personResults = $json['data'];
 
-
         $lastFromThisDomain = LastPersonChecked::where('domain_id', $domainID)->first();
         $person = $lastFromThisDomain ? $lastFromThisDomain : new LastPersonChecked();
 
         $sourcesArr = array_map(function ($elem) {
             return $elem['uri'];
         }, $personResults['sources']);
-        $sources = implode('|', $sourcesArr);
+        $sources = json_encode($sourcesArr);
 
         $person->first_name = $personResults['first_name'];
         $person->last_name = $personResults['last_name'];
@@ -102,9 +101,8 @@ class Hunter extends Controller
         $person->verified = $personResults['verification']['status'];
         $person->confidence = $personResults['score'];
         $person->domain_id = $domainID;
-        if ($sources !== '') {
-            $person->sources = $sources;
-        }
+        $person->sources = $sources;
+
         $person->save();
     }
 
@@ -116,24 +114,13 @@ class Hunter extends Controller
 
         if ($dataCheck === null || $dataCheck->domain_id !== $domain->id) {
 
-            if ($lastFromThisDomain->sources) {
-                $sourcesArr = array_map(function ($elem) {
-                    return $elem['uri'];
-                }, $lastFromThisDomain['sources']);
-                $sources = implode('|', $sourcesArr);
-            } else {
-                $sources = '';
-            };
-
             $hunterData = new HunterData();
             $hunterData->email = $lastFromThisDomain['email'];
             $hunterData->first_name = $lastFromThisDomain['first_name'];
             $hunterData->last_name = $lastFromThisDomain['last_name'];
             $hunterData->verified = $lastFromThisDomain['verified'];
             $hunterData->confidence = $lastFromThisDomain['confidence'];
-            if ($sources !== '') {
-                $hunterData->sources = $sources;
-            }
+            $hunterData->sources = $lastFromThisDomain['sources'];
             $hunterData->domain_id = $domain->id;
             $hunterData->save();
             $lastFromThisDomain->delete();
