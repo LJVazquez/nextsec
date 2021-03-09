@@ -3,15 +3,13 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                            ">
+                                                                                                                                                                                                                                                                ">
 @endsection
 
 @section('content')
 
     <div class="container">
-        <h1 class="text-primary">Email</h1>
-        <h2 class="text-info">{{ "$email->name@$domain->name" }}</h2>
-        <p class="text-secondary">Registered by {{ $user->name }}</p>
+        <h1 class="text-info">{{ "$email->name" }}</h1>
     </div>
     <div class="container">
         <form action="/emails/{{ $email->id }}" method="post">

@@ -42,7 +42,7 @@ class EmailPolicy
      */
     public function delete(User $user, Email $email)
     {
-        return $user->id === $email->domain->user->id;
+        return $user->id === $email->user->id;
     }
 
     public function getFile(IntelxData $file)

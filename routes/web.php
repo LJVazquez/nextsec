@@ -21,6 +21,10 @@ Route::resource('/domains', 'App\Http\Controllers\DomainController');
 Route::post('/domains/{domain}', 'App\Http\Controllers\DomainController@intelxSearch');
 Route::get('/domain-search/{domain}', 'App\Http\Controllers\DomainController@hunterDomainSearch');
 Route::get('/person-search/{domain}', 'App\Http\Controllers\DomainController@hunterPersonSearch');
+Route::post('/person-save/{domain}', 'App\Http\Controllers\DomainController@hunterSavePerson');
+
+Route::delete('/delete-hunter-data/{hunterData}', 'App\utilities\Hunter@destroy');
+Route::post('/asociate-hunter-data/{hunterData}', 'App\utilities\Hunter@asociateEmail');
 
 
 Route::resource('/emails', 'App\Http\Controllers\EmailController');

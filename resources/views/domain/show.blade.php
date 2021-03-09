@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ">
 @endsection
 
 @section('content')
@@ -12,7 +12,6 @@
         <div class="container">
             <div class="row">
                 <h1 class="text-info">{{ $domain->name }}</h2>
-                    <p class="text-secondary">Registered by {{ $domain->user->name }}</p>
             </div>
         </div>
     </div>
@@ -20,9 +19,18 @@
     <div class="container-fluid bg-light py-4 mb-4">
         <div class="container">
             <div class="row">
-                <h3>Emails asociados al dominio</h3>
+                <h3>Busqueda de emails en el dominio</h3>
                 @if (session('domain-count'))
                     <p class="text-success">{{ session('domain-count') }}</p>
+                @endif
+                @if (session('hunter-delete-message'))
+                    <p class="text-success">{{ session('hunter-delete-message') }}</p>
+                @endif
+                @if (session('hunter-asociate-message') === 'success')
+                    <p class="text-success">Email asociado con exito.</p>
+                @endif
+                @if (session('hunter-asociate-message') === 'fail')
+                    <p class="text-danger">Email ya asociado.</p>
                 @endif
                 <div class="table-responsive">
                     <table id="hunter-domain-results" class="table table-light table-striped table-bordered">
@@ -31,17 +39,20 @@
                                 <th>Email</th>
                                 <th>Datos personales</th>
                                 <th>Verificado</th>
+                                <th>Probabilidad</th>
                                 <th>Fuentes</th>
-                                <th>Agregar email</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($hunterdomaindata as $data)
+                            @foreach ($hunterData as $data)
                                 <tr>
                                     <td>{{ $data->email }}</td>
                                     <td>{{ !$data->first_name && !$data->last_name ? 'Sin datos' : "$data->first_name $data->last_name" }}
                                     </td>
-                                    <td>Agregar</td>
+                                    <td>{{ $data->verified ? $data->verified : 'No' }}</td>
+                                    <td class="{{ $data->confidence > 70 ? 'text-success' : 'text-warning' }}">
+                                        {{ $data->confidence }}%</td>
                                     <td>
                                         @if ($data->sources)
                                             <div style="height: 50px; overflow-y: scroll;">
@@ -55,7 +66,17 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td><button class="btn btn-primary" type="button">Agregar</button></td>
+                                    <td class="d-flex justify-content-around">
+                                        <form action="/asociate-hunter-data/{{ $data->id }}" method="post">
+                                            @csrf
+                                            <button class="btn btn-primary" type="submit">Asociar</button>
+                                        </form>
+                                        <form action="/delete-hunter-data/{{ $data->id }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger" type="submit">Borrar</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -72,44 +93,9 @@
     <div class="container-fluid bg-light py-4 mb-4">
         <div class="container">
             <div class="row">
-                <h4>Buscar email por datos personales</h4>
-                @if (session('person') === 'no esta')
-                    <p class="text-danger">Persona no encontrada</p>
-                @endif
-                @if (session('person'))
+                <h4>Busqueda de email por datos personales</h4>
+                @if (session('found'))
                     <p class="text-success">Persona Encontrada.</p>
-                @endif
-                @if (session('person'))
-                    <div class="table-responsive">
-                        <table id="hunter-person-results" class="table table-light table-striped table-bordered">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Datos personales</th>
-                                    <th>Fuentes</th>
-                                    <th>Verificado</th>
-                                    <th>Asociar mail</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <td>{{ session('person')['email'] }}</td>
-                                <td>{{ session('person')['first_name'] }}</td>
-                                <td>
-                                    <div style="height: 50px; overflow-y: scroll;">
-                                        <ul>
-                                            @foreach (session('person')['sources'] as $source)
-                                                <li>
-                                                    {{ $source }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td>Agregar</td>
-                                <td><button class="btn btn-primary" type="button">Asociar</button></td>
-                            </tbody>
-                        </table>
-                    </div>
                 @endif
                 <form method="get" action="/person-search/{{ $domain->id }}">
                     <div class="row">
@@ -127,6 +113,52 @@
                         </div>
                     </div>
                 </form>
+                @if ($person)
+                    <div class="table-responsive mt-4">
+                        <h5>Ultima persona buscada</h5>
+                        <table id="hunter-person-results" class="table table-light table-striped table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Datos personales</th>
+                                    <th>Verificado</th>
+                                    <th>Probabilidad</th>
+                                    <th>Fuentes</th>
+                                    <th>Asociar mail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td>{{ $person ? $person->email : '-' }}</td>
+                                <td>{{ ($person->first_name ? $person->first_name : '-' . ' ' . $person->last_name) ? $person->last_name : '' }}
+                                </td>
+                                <td>{{ $person->verified ? $person->verified : 'No' }}</td>
+                                <td>{{ $person->confidence ? $person->confidence : '0' }}</td>
+                                <td>
+                                    @if ($person->sources)
+                                        <div style="height: 50px; overflow-y: scroll;">
+                                            <ul>
+                                                @foreach ($person->sources as $source)
+                                                    <li>
+                                                        {{ $source }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <form action="/person-save/{{ $domain->id }}" method="post">
+                                        @csrf
+                                        <button class="btn btn-primary" type="submit">Asociar</button>
+                                    </form>
+                                </td>
+                                @if (session('person-message'))
+                                    <p class="text-danger">{{ session('person-message') }}</p>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </div>
 
         </div>
@@ -138,7 +170,7 @@
                 <h3>Resultados de inteligencia del dominio</h3>
                 <p class="fw-lighter">Usando modalidad preview por limitaciones de la API free</p>
                 @if (session('count'))
-                    <p class="text-success">{{ session('count') }} resultados nuevos.</p>
+                    <p class="text-success">{{ session('count') }}</p>
                 @endif
                 <div class="table-responsive">
                     <table id="intelx-results" class="table table-light table-striped table-bordered">

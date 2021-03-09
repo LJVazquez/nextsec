@@ -2,18 +2,22 @@
 
 namespace App\utilities;
 
+use App\Http\Controllers\Controller;
 use App\Models\Domain;
-use App\Models\HunterDomainData;
+use App\Models\Email;
+use App\Models\HunterData;
+use App\Models\LastPersonChecked;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class Hunter
+class Hunter extends Controller
 {
 
     private $searchOptions;
     private $searchResults;
-    private $personResults;
     private $client;
+    public $message = false;
 
     public function __construct($optionalParameters = null)
     {
@@ -37,7 +41,6 @@ class Hunter
         } while ($response->getStatusCode() !== 200);
 
         $json = json_decode($response->getBody()->getContents(), true);
-
         $this->searchResults = $json['data']['emails'];
     }
 
@@ -45,7 +48,7 @@ class Hunter
     {
         foreach ($this->searchResults as $email) {
 
-            $dataCheck = HunterDomainData::where('email', $email['value'])
+            $dataCheck = HunterData::where('email', $email['value'])
                 ->first();
 
             if ($dataCheck === null || $dataCheck->domain_id !== $domain->id) {
@@ -55,11 +58,12 @@ class Hunter
                 }, $email['sources']);
                 $sources = implode('|', $sourcesArr);
 
-                $hunterData = new HunterDomainData();
+                $hunterData = new HunterData();
                 $hunterData->email = $email['value'];
                 $hunterData->first_name = $email['first_name'];
                 $hunterData->last_name = $email['last_name'];
-                $hunterData->type = $email['type'];
+                $hunterData->verified = $email['verification']['status'];
+                $hunterData->confidence = $email['confidence'];
                 $hunterData->sources = $sources;
                 $hunterData->domain_id = $domain->id;
                 $hunterData->save();
@@ -67,7 +71,7 @@ class Hunter
         }
     }
 
-    public function personSearch($searchTerm, Request $request)
+    public function personSearch($searchTerm, Request $request, $domainID)
     {
         do {
             $response = $this->client->request('GET', 'v2/email-finder', [
@@ -81,33 +85,86 @@ class Hunter
         } while ($response->getStatusCode() !== 200);
 
         $json = json_decode($response->getBody()->getContents(), true);
-        $this->personResults = $json['data'];
+        $personResults = $json['data'];
+
+
+        $lastFromThisDomain = LastPersonChecked::where('domain_id', $domainID)->first();
+        $person = $lastFromThisDomain ? $lastFromThisDomain : new LastPersonChecked();
+
+        $sourcesArr = array_map(function ($elem) {
+            return $elem['uri'];
+        }, $personResults['sources']);
+        $sources = implode('|', $sourcesArr);
+
+        $person->first_name = $personResults['first_name'];
+        $person->last_name = $personResults['last_name'];
+        $person->email = $personResults['email'];
+        $person->verified = $personResults['verification']['status'];
+        $person->confidence = $personResults['score'];
+        $person->domain_id = $domainID;
+        if ($sources !== '') {
+            $person->sources = $sources;
+        }
+        $person->save();
     }
 
     public function storePerson(Domain $domain)
     {
-        $dataCheck = HunterDomainData::where('email', $this->personResults['email'])
+        $lastFromThisDomain = LastPersonChecked::where('domain_id', $domain->id)->first();
+        $dataCheck = HunterData::where('email', $lastFromThisDomain['email'])
             ->first();
 
         if ($dataCheck === null || $dataCheck->domain_id !== $domain->id) {
 
-            $sourcesArr = array_map(function ($elem) {
-                return $elem['uri'];
-            }, $this->personResults['sources']);
-            $sources = implode('|', $sourcesArr);
+            if ($lastFromThisDomain->sources) {
+                $sourcesArr = array_map(function ($elem) {
+                    return $elem['uri'];
+                }, $lastFromThisDomain['sources']);
+                $sources = implode('|', $sourcesArr);
+            } else {
+                $sources = '';
+            };
 
-            $hunterData = new HunterDomainData();
-            $hunterData->email = $this->personResults['email'];
-            $hunterData->first_name = $this->personResults['first_name'];
-            $hunterData->last_name = $this->personResults['last_name'];
+            $hunterData = new HunterData();
+            $hunterData->email = $lastFromThisDomain['email'];
+            $hunterData->first_name = $lastFromThisDomain['first_name'];
+            $hunterData->last_name = $lastFromThisDomain['last_name'];
+            $hunterData->verified = $lastFromThisDomain['verified'];
+            $hunterData->confidence = $lastFromThisDomain['confidence'];
             if ($sources !== '') {
                 $hunterData->sources = $sources;
             }
             $hunterData->domain_id = $domain->id;
             $hunterData->save();
+            $lastFromThisDomain->delete();
+        } else {
+            $this->message = 'El email ya existe en la colección de este dominio';
         }
+    }
 
-        return $this->personResults;
+    public function destroy(HunterData $hunterData)
+    {
+        HunterData::destroy($hunterData->id);
+        return redirect("/domains/$hunterData->domain_id")->with('hunter-delete-message', 'Resultado eliminado de la busqueda');
+    }
+
+    public function asociateEmail(HunterData $hunterData)
+    {
+        $dataCheck = Email::where('name', $hunterData->email)
+            ->first();
+
+        if ($dataCheck === null || $dataCheck->domain_id !== $hunterData->domain->id) {
+            $email = new Email();
+            $email->name = $hunterData['email'];
+            $email->first_name = $hunterData['first_name'];
+            $email->last_name = $hunterData['last_name'];
+            $email->domain_id = $hunterData->domain_id;
+            $email->user_id = Auth::id();
+            $email->save();
+            return redirect("/domains/$hunterData->domain_id")->with('hunter-asociate-message', 'success');
+        } else {
+            return redirect("/domains/$hunterData->domain_id")->with('hunter-asociate-message', 'fail');
+        }
     }
 
     // public function getResults()

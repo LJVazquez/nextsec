@@ -7,6 +7,7 @@ use App\Models\Domain;
 use App\Models\IntelxData;
 use Illuminate\Http\Request;
 use App\utilities\Intelx;
+use Illuminate\Support\Facades\Auth;
 
 class EmailController extends Controller
 {
@@ -39,8 +40,16 @@ class EmailController extends Controller
     public function store(Request $request)
     {
         $email = new Email;
+        if ($request->use_user) {
+            $email->first_name = Auth::user()->name;
+            $email->last_name = Auth::user()->last_name;
+        } else {
+            $email->first_name = $request->first_name;
+            $email->last_name = $request->last_name;
+        }
+        if ($request->domain !== 'none') $email->domain_id = $request->domain;
         $email->name = $request->name;
-        $email->domain_id = $request->domain;
+        $email->user_id = Auth::id();
         $email->save();
 
         return redirect('/emails');
@@ -60,8 +69,6 @@ class EmailController extends Controller
 
         return view('email.show', [
             'email' => $email,
-            'domain' => $email->domain,
-            'user' => $email->domain->user,
             'intelxdata' => $intelxdata
         ]);
     }
@@ -106,7 +113,7 @@ class EmailController extends Controller
 
     public function intelxSearch(Email $email)
     {
-        $searchTerm = htmlspecialchars($email->name . '@' . $email->domain->name);
+        $searchTerm = htmlspecialchars($email->name);
         $previousCount = IntelxData::where('email_id', $email->id)->count();
 
         $intelx = new Intelx();

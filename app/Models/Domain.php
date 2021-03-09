@@ -26,6 +26,6 @@ class Domain extends Model
 
     public function hunterDomains()
     {
-        return $this->hasMany(HunterDomainData::class);
+        return $this->hasMany(HunterData::class);
     }
 }

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Domain;
-use App\Models\hunterDomainData;
+use App\Models\hunterData;
 use App\Models\IntelxData;
+use App\Models\LastPersonChecked;
 use App\utilities\Hunter;
 use App\utilities\Intelx;
 use Illuminate\Http\Request;
@@ -56,15 +57,16 @@ class DomainController extends Controller
     public function show(Domain $domain)
     {
         $intelxData = $domain->intelx->sortBy('updated_at');
-
-        $hunterDomainData = $domain->hunterDomains->sortBy('updated_at');
+        $hunterData = $domain->hunterDomains->sortBy('updated_at');
+        $person = LastPersonChecked::first() ? LastPersonChecked::first() : false;
 
         return view('domain.show', [
             'domain' => $domain,
             'emails' => $domain->emails,
             'user' => $domain->user,
             'intelxdata' => $intelxData,
-            'hunterdomaindata' => $hunterDomainData
+            'hunterData' => $hunterData,
+            'person' => $person
         ]);
     }
 
@@ -128,28 +130,36 @@ class DomainController extends Controller
 
     public function hunterDomainSearch(Domain $domain)
     {
-        $previousCount = $domain->hunterDomains->count();
+
+        $previousCount = hunterData::where('domain_id', $domain->id)->count();
 
         $hunter = new Hunter();
         $hunter->domainSearch($domain->name);
         $hunter->storeResults($domain);
 
-        $newCount = $domain->hunterDomains->count();
+        $newCount = hunterData::where('domain_id', $domain->id)->count();
 
         $totalCount = $newCount - $previousCount;
 
         if ($totalCount <= 0) {
-            return redirect("/domains/$domain->id");
+            return redirect("/domains/$domain->id")->with('domain-count', "Sin resultados nuevos.");;
         } else {
-            return redirect("/domains/$domain->id")->wit('domain-count', "$totalCount resultados nuevos.");
+            return redirect("/domains/$domain->id")->with('domain-count', "$totalCount resultados nuevos.");
         }
     }
 
     public function hunterPersonSearch(Domain $domain, Request $request)
     {
         $hunter = new Hunter();
-        $hunter->personSearch($domain->name, $request);
-        $personFound = $hunter->storePerson($domain);
-        return redirect("/domains/$domain->id")->with('person', $personFound);
+        $hunter->personSearch($domain->name, $request, $domain->id);
+        // $personFound = $hunter->storePerson($domain);
+        return redirect("/domains/$domain->id")->with('found', true);
+    }
+
+    public function hunterSavePerson(Domain $domain)
+    {
+        $hunter = new Hunter();
+        $hunter->storePerson($domain);
+        return redirect("/domains/$domain->id")->with('person-message', $hunter->message);
     }
 }

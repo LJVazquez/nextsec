@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHunterDomainDataTable extends Migration
+class CreateLastPersonCheckedsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateHunterDomainDataTable extends Migration
      */
     public function up()
     {
-        Schema::create('hunter_domain_data', function (Blueprint $table) {
+        Schema::create('last_person_checkeds', function (Blueprint $table) {
             $table->id();
             $table->string('email');
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('type')->nullable();
+            $table->string('verified')->nullable();
+            $table->integer('confidence')->nullable();
             $table->text('sources')->nullable();
             $table->unsignedBigInteger('domain_id');
             $table->timestamps();
@@ -37,6 +38,6 @@ class CreateHunterDomainDataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hunter_domain_data');
+        Schema::dropIfExists('last_person_checkeds');
     }
 }

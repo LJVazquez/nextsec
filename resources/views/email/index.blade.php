@@ -7,8 +7,7 @@
         <ul class="list-group">
             @foreach ($emails as $email)
                 <li class="list-group-item list-group-item-primary">
-                    <a href="/emails/{{ $email->id }}"
-                        style="text-decoration: none"><strong>{{ "$email->name@" }}</strong>{{ $email->domain->name }}</a>
+                    <a href="/emails/{{ $email->id }}" style="text-decoration: none">{{ $email->name }}</a>
 
                 </li>
             @endforeach
