@@ -30,7 +30,7 @@ Route::post('/asociate-hunter-data/{hunterData}', 'App\Http\Controllers\HunterCo
 Route::resource('/emails', 'App\Http\Controllers\EmailController');
 Route::post('/emails/{email}', 'App\Http\Controllers\EmailController@intelxSearch');
 
-Route::get('/getFile/{file}', 'App\utilities\Intelx@getFile');
+Route::get('/getFile/{file}', 'App\Http\Controllers\IntelxController@getFile');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');

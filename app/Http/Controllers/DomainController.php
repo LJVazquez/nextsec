@@ -7,7 +7,7 @@ use App\Models\hunterData;
 use App\Models\IntelxData;
 use App\Models\LastPersonChecked;
 use App\Http\Controllers\HunterController;
-use App\utilities\Intelx;
+use App\Http\Controllers\IntelxController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -113,7 +113,7 @@ class DomainController extends Controller
         $searchTerm = htmlspecialchars($domain->name);
         $previousCount = IntelxData::where('domain_id', $domain->id)->count();
 
-        $intelx = new Intelx();
+        $intelx = new IntelxController();
         $intelx->makeRequest($searchTerm);
         $intelx->getResults();
         $intelx->storeResults($domain);

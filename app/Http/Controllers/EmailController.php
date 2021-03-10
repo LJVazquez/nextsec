@@ -6,7 +6,7 @@ use App\Models\Email;
 use App\Models\Domain;
 use App\Models\IntelxData;
 use Illuminate\Http\Request;
-use App\utilities\Intelx;
+use App\Http\Controllers\IntelxController;
 use Illuminate\Support\Facades\Auth;
 
 class EmailController extends Controller
@@ -116,7 +116,7 @@ class EmailController extends Controller
         $searchTerm = htmlspecialchars($email->name);
         $previousCount = IntelxData::where('email_id', $email->id)->count();
 
-        $intelx = new Intelx();
+        $intelx = new IntelxController();
         $intelx->makeRequest($searchTerm);
         $intelx->getResults();
         $intelx->storeResults($email);

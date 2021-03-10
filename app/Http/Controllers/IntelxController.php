@@ -1,12 +1,12 @@
 <?php
 
-namespace App\utilities;
+namespace App\Http\Controllers;
 
 use App\Models\IntelxData;
 use Exception;
 use GuzzleHttp\Client;
 
-class Intelx
+class IntelxController
 {
     private $searchID;
     private $searchResults;
