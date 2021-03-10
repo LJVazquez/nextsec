@@ -14,9 +14,42 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container"><a class="navbar-brand" href="/">NextSec</a></div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
+        <div class="container">
+            <a class="navbar-brand" href=""><img src="{{ asset('images/lock-solid.svg') }}" width="30" height="30"
+                    class="d-inline-block align-top" alt="">
+                NextSec
+            </a>
+            <ul class="navbar-nav mr-auto">
+                @if (Auth::check())
+                    <div class="dropdown">
+                        <button class="btn btn-dark dropdown-toggle" type="button" id="menu" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            {{ Auth::user()->name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="menu">
+                            <li><a class="dropdown-item" href="/user/profile">Perfil</a></li>
+                            <li>
+                                <form action="/logout" method="POST">
+                                    @csrf
+                                    <button class="btn btn-link dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @else
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/register">Registrarse</a>
+                    </li>
+                @endif
+            </ul>
+        </div>
+
     </nav>
+
 
     <div class="container-fluid">
         @yield('content')

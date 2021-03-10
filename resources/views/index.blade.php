@@ -14,7 +14,7 @@
                         <button class="btn btn-danger" type="submit">Logout</button>
                     </form>
                 @else
-                    <a href="/login" class="btn btn-success">Login</a>
+                    <a href="/logout" class="btn btn-success">Login</a>
                     <a href="/register" class="btn btn-success">Registrarse</a>
                 @endif
             </div>

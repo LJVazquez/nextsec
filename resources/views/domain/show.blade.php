@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ">
 @endsection
 
 @section('content')
@@ -85,7 +85,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <form action="/domain-search/{{ $domain->id }}" method="get">
+                    <form action="/domain-search/{{ $domain->id }}" method="post">
                         @csrf
                         <button class="btn btn-primary my-2" type="submit">Actualizar resultados</button>
                     </form>
@@ -105,7 +105,7 @@
                         <p class="text-danger">{{ session('search-person')[1] }}</p>
                     @endif
                 @endif
-                <form method="get" action="/person-search/{{ $domain->id }}">
+                <form method="post" action="/person-search/{{ $domain->id }}">
                     <div class="row">
                         @csrf
                         <div class="col-12 col-sm-6 col-md-4">
