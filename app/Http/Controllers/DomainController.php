@@ -6,7 +6,7 @@ use App\Models\Domain;
 use App\Models\hunterData;
 use App\Models\IntelxData;
 use App\Models\LastPersonChecked;
-use App\utilities\Hunter;
+use App\Http\Controllers\HunterController;
 use App\utilities\Intelx;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -132,7 +132,7 @@ class DomainController extends Controller
 
         $previousCount = hunterData::where('domain_id', $domain->id)->count();
 
-        $hunter = new Hunter();
+        $hunter = new HunterController();
         $hunter->domainSearch($domain->name);
         $hunter->storeResults($domain);
 
@@ -149,7 +149,7 @@ class DomainController extends Controller
 
     public function hunterPersonSearch(Domain $domain, Request $request)
     {
-        $hunter = new Hunter();
+        $hunter = new HunterController();
         $hunter->personSearch($domain->name, $request, $domain->id);
 
         return redirect("/domains/$domain->id")->with('search-person', $hunter->message);
@@ -157,7 +157,7 @@ class DomainController extends Controller
 
     public function hunterSavePerson(Domain $domain)
     {
-        $hunter = new Hunter();
+        $hunter = new HunterController();
         $hunter->storePerson($domain);
         return redirect("/domains/$domain->id")->with('person-message', $hunter->message);
     }

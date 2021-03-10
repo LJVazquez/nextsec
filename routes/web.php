@@ -23,8 +23,8 @@ Route::get('/domain-search/{domain}', 'App\Http\Controllers\DomainController@hun
 Route::get('/person-search/{domain}', 'App\Http\Controllers\DomainController@hunterPersonSearch');
 Route::post('/person-save/{domain}', 'App\Http\Controllers\DomainController@hunterSavePerson');
 
-Route::delete('/delete-hunter-data/{hunterData}', 'App\utilities\Hunter@destroy');
-Route::post('/asociate-hunter-data/{hunterData}', 'App\utilities\Hunter@asociateEmail');
+Route::delete('/delete-hunter-data/{hunterData}', 'App\Http\Controllers\HunterController@destroy');
+Route::post('/asociate-hunter-data/{hunterData}', 'App\Http\Controllers\HunterController@asociateEmail');
 
 
 Route::resource('/emails', 'App\Http\Controllers\EmailController');

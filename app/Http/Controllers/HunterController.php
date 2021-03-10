@@ -1,6 +1,6 @@
 <?php
 
-namespace App\utilities;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Domain;
@@ -11,20 +11,15 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
 
-class Hunter extends Controller
+class HunterController extends Controller
 {
-
-    private $searchOptions;
     private $searchResults;
     private $client;
     public $message = false;
 
-    public function __construct($optionalParameters = null)
+    public function __construct()
     {
-        if ($optionalParameters) $this->searchOptions = $optionalParameters;
-
         $this->client = new Client([
             'base_uri' => 'https://api.hunter.io',
             // 'timeout'  => 2.0,
