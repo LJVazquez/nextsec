@@ -13,34 +13,25 @@ use Illuminate\Support\Facades\Auth;
 
 class DomainController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return view('domain.index', ['domains' => Domain::all()]);
-    }
+    // public function index()
+    // {
+    //     return view('domain.index', ['domains' => Domain::all()]);
+    // }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('domain.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+        $check = Domain::where('name', $request->name)->first();
+        if ($check) {
+            if ($check->name === $request->name) {
+                return redirect('domains/create')->with('create-error', "$request->name ya se encuentra en su base de datos.");
+            }
+        }
+
         $domain = new Domain;
         $domain->name = $request->name;
         $domain->user_id = Auth::id();
@@ -48,12 +39,6 @@ class DomainController extends Controller
         return redirect('/domains');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Domain  $domain
-     * @return \Illuminate\Http\Response
-     */
     public function show(Domain $domain)
     {
         $intelxData = $domain->intelx->sortBy('updated_at');
@@ -70,42 +55,32 @@ class DomainController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Domain  $domain
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Domain $domain)
     {
-        //
+        return view('domain.edit', ['domain' => $domain]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Domain  $domain
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Domain $domain)
     {
-        //
+        $check = Domain::where('name', $request->name)->first();
+        if ($check) {
+            if ($check->name === $request->name) {
+                return redirect("domains/$domain->id/edit")->with('update-error', "$request->name ya se encuentra en su base de datos.");
+            }
+        }
+
+        $domain->name = $request->name;
+        $domain->save();
+        return redirect('/')->with('domain-update', "$domain->name actualizado");
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Domain  $domain
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Domain $domain)
     {
         $this->authorize('delete', $domain);
 
         Domain::destroy($domain->id);
 
-        return redirect('/domains')->with('message', 'Dominio eliminado');
+        return redirect('/')->with('domain-update', "$domain->name eliminado.");
     }
 
     public function intelxSearch(Domain $domain)

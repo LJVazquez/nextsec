@@ -11,34 +11,27 @@ use Illuminate\Support\Facades\Auth;
 
 class EmailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return view('email.index', ['emails' => Email::all()]);
-    }
+    // public function index()
+    // {
+    //     return view('email.index', ['emails' => Email::all()]);
+    // }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        return view('email.create', ['domains' => Domain::all()]);
+        $domains = Domain::where('user_id', Auth::id())->get();
+        return view('email.create', ['domains' => $domains]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+        $check = Email::where('name', $request->name)->first();
+
+        if ($check) {
+            if ($check->name === $request->name) {
+                return redirect('emails/create')->with('create-error', "$request->name ya se encuentra en su base de datos.");
+            }
+        }
+
         $email = new Email;
         if ($request->use_user) {
             $email->first_name = Auth::user()->name;
@@ -52,15 +45,9 @@ class EmailController extends Controller
         $email->user_id = Auth::id();
         $email->save();
 
-        return redirect('/emails');
+        return redirect('/')->with('email-update', "$request->name se ha creado.");
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Email  $email
-     * @return \Illuminate\Http\Response
-     */
     public function show(Email $email)
     {
         $intelxdata = IntelxData::where('email_id', $email->id)
@@ -73,42 +60,28 @@ class EmailController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Email  $email
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Email $email)
     {
-        //
+        $domains = Domain::where('user_id', Auth::id())->get();
+        return view('email.edit', ['email' => $email, 'domains' => $domains]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Email  $email
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Email $email)
     {
-        //
+        $email->first_name = $request->first_name;
+        $email->last_name = $request->last_name;
+        $email->domain_id = $request->domain;
+        $email->save();
+        return redirect('/')->with('email-update', "$email->name se ha actualizado.");
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Email  $email
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Email $email)
     {
         $this->authorize('delete', $email);
 
         Email::destroy($email->id);
 
-        return redirect('/emails')->with('message', 'Email eliminado');
+        return redirect('/')->with('email-update', "$email->name se ha eliminado.");
     }
 
     public function intelxSearch(Email $email)

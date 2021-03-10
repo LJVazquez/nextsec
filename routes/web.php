@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
 
-
+Route::get('/', 'App\Http\Controllers\UserController@dash');
 
 Route::resource('/users', 'App\Http\Controllers\UserController');
 Route::resource('/domains', 'App\Http\Controllers\DomainController');
@@ -27,6 +27,6 @@ Route::post('/emails/{email}', 'App\Http\Controllers\EmailController@intelxSearc
 
 Route::get('/getFile/{file}', 'App\Http\Controllers\IntelxController@getFile');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/', function () {
-    return view('index', ['user' => Auth::user()]);
-})->name('dashboard');
+// Route::middleware(['auth:sanctum', 'verified'])->get('/', function () {
+//     return view('dash');
+// })->name('dashboard');

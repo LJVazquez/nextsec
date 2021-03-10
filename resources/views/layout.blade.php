@@ -7,27 +7,31 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-
     @yield('css')
+    <style>
+        .bg-green {
+            background-color: #08FFBE;
+        }
+
+    </style>
 
     <title>NextSect</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
         <div class="container">
-            <a class="navbar-brand" href=""><img src="{{ asset('images/lock-solid.svg') }}" width="30" height="30"
+            <a class="navbar-brand" href="/"><img src="{{ asset('images/lock-solid.svg') }}" width="30" height="30"
                     class="d-inline-block align-top" alt="">
-                NextSec
+                NextSecApp
             </a>
             <ul class="navbar-nav mr-auto">
                 @if (Auth::check())
                     <div class="dropdown">
-                        <button class="btn btn-dark dropdown-toggle" type="button" id="menu" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <button class="btn" type="button" id="menu" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::user()->name }}
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="menu">
+                        <ul class="dropdown-menu" aria-labelledby="menu">
                             <li><a class="dropdown-item" href="/user/profile">Perfil</a></li>
                             <li>
                                 <form action="/logout" method="POST">

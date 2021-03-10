@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Domain;
+use App\Models\Email;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -81,6 +84,17 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+    }
+
+    public function dash()
+    {
+        $id = Auth::id();
+        $domains = Domain::where('user_id', $id)->get();
+        $emails = Email::where('user_id', $id)->get();
+
+        return view('dash.main', [
+            'domains' => $domains,
+            'emails' => $emails,
+        ]);
     }
 }
