@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
 @endsection
 
 @section('content')
@@ -98,8 +98,12 @@
         <div class="container">
             <div class="row">
                 <h4>Busqueda de email por datos personales</h4>
-                @if (session('found'))
-                    <p class="text-success">Persona Encontrada.</p>
+                @if (session('search-person'))
+                    @if (session('search-person')[0] === 'success')
+                        <p class="text-success">{{ session('search-person')[1] }}</p>
+                    @else
+                        <p class="text-danger">{{ session('search-person')[1] }}</p>
+                    @endif
                 @endif
                 <form method="get" action="/person-search/{{ $domain->id }}">
                     <div class="row">
@@ -174,8 +178,14 @@
             <div class="row">
                 <h3>Resultados de inteligencia del dominio</h3>
                 <p class="fw-lighter">Usando modalidad preview por limitaciones de la API free</p>
-                @if (session('count'))
-                    <p class="text-success">{{ session('count') }}</p>
+                @if (session('intelx-search-msg'))
+                    @if (session('intelx-search-msg')['status'] === 'success')
+                        <p class="text-success">
+                            {{ session('intelx-search-msg')['msg'] . session('intelx-search-msg')['props'] }}
+                        </p>
+                    @elseif ((session('intelx-search-msg')['status'] === 'fail'))
+                        <p class="text-danger">{{ session('intelx-search-mgs')['msg'] }}</p>
+                    @endif
                 @endif
                 <div class="table-responsive">
                     <table id="intelx-results" class="table table-light table-striped table-bordered">

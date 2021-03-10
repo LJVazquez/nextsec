@@ -117,15 +117,14 @@ class DomainController extends Controller
         $intelx->makeRequest($searchTerm);
         $intelx->getResults();
         $intelx->storeResults($domain);
+        $msg = $intelx->message;
 
         $newCount = IntelxData::where('domain_id', $domain->id)->count();
         $totalCount = $newCount - $previousCount;
 
-        if ($totalCount <= 0) {
-            return redirect("/domains/$domain->id")->with('count', 'Sin resultados nuevos');
-        } else {
-            return redirect("/domains/$domain->id")->with('count', "$totalCount resultados nuevos.");
-        }
+        $msg['props'] = strval($totalCount);
+
+        return redirect("/domains/$domain->id")->with('intelx-search-msg', $msg);
     }
 
     public function hunterDomainSearch(Domain $domain)
@@ -152,8 +151,8 @@ class DomainController extends Controller
     {
         $hunter = new Hunter();
         $hunter->personSearch($domain->name, $request, $domain->id);
-        // $personFound = $hunter->storePerson($domain);
-        return redirect("/domains/$domain->id")->with('found', true);
+
+        return redirect("/domains/$domain->id")->with('search-person', $hunter->message);
     }
 
     public function hunterSavePerson(Domain $domain)

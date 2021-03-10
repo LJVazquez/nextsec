@@ -120,14 +120,12 @@ class EmailController extends Controller
         $intelx->makeRequest($searchTerm);
         $intelx->getResults();
         $intelx->storeResults($email);
+        $msg = $intelx->message;
 
         $newCount = IntelxData::where('email_id', $email->id)->count();
         $totalCount = $newCount - $previousCount;
+        $msg['props'] = strval($totalCount);
 
-        if ($totalCount <= 0) {
-            return redirect("/emails/$email->id")->with('count', 'Sin resultados nuevos');
-        } else {
-            return redirect("/emails/$email->id")->with('count', "$totalCount resultados nuevos.");
-        }
+        return redirect("/emails/$email->id")->with('intelx-search-msg', $msg);
     }
 }

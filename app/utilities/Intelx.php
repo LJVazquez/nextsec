@@ -3,20 +3,18 @@
 namespace App\utilities;
 
 use App\Models\IntelxData;
+use Exception;
 use GuzzleHttp\Client;
 
 class Intelx
 {
-
-    private $searchOptions;
     private $searchID;
     private $searchResults;
     private $client;
+    public $message = ['status' => '', 'msg' => '', 'props' => ''];
 
-    public function __construct($optionalParameters = null)
+    public function __construct()
     {
-        if ($optionalParameters) $this->searchOptions = $optionalParameters;
-
         $this->client = new Client([
             'base_uri' => 'https://2.intelx.io',
             // 'timeout'  => 2.0,
@@ -28,15 +26,20 @@ class Intelx
 
     public function makeRequest($searchTerm)
     {
-        do {
-            $response = $this->client->request('POST', 'intelligent/search', [
-                'json' => [
-                    'term' => $searchTerm
-                ]
-            ]);
-            $json = json_decode($response->getBody()->getContents(), true);
-        } while ($json['status'] !== 0);
-
+        try {
+            do {
+                $response = $this->client->request('POST', 'intelligent/search', [
+                    'json' => [
+                        'term' => $searchTerm
+                    ]
+                ]);
+                $json = json_decode($response->getBody()->getContents(), true);
+            } while ($json['status'] !== 0);
+        } catch (Exception $e) {
+            $this->message = ['status' => 'fail', 'msg' => 'Error con el dominio. Intente mas tarde'];
+            return;
+        }
+        $this->message = ['status' => 'success', 'msg' => 'Nuevos resultados encontrados: '];
         $this->searchID = $json['id'];
     }
 
@@ -57,28 +60,6 @@ class Intelx
 
     public function storeResults($owner)
     {
-        // foreach ($this->searchResults as $searchResult) {
-        //     $intelxData = IntelxData::firstOrCreate(
-        //         ['systemid' => '49ce6ecf-d6bd-4489-8058-65bd8c874306'],
-        //         [
-        //             'systemid' => $searchResult['systemid'],
-        //             'storageid' => $searchResult['storageid'],
-        //             'instore' => $searchResult['instore'],
-        //             'type' => $searchResult['type'],
-        //             'media' => $searchResult['media'],
-        //             'added' => $searchResult['added'],
-        //             'name' => $searchResult['name'],
-        //             'bucket' => $searchResult['bucket']
-        //         ]
-        //     );
-        //     if ($owner->getTable() === "emails") {
-        //         $intelxData->email_id = $owner->id;
-        //     } else {
-        //         $intelxData->domain_id = $owner->id;
-        //     }
-        //     $intelxData->save();
-        // }
-
         foreach ($this->searchResults as $searchResult) {
 
             $dataCheck = IntelxData::where('systemid', $searchResult['systemid'])

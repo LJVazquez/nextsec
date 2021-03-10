@@ -7,9 +7,11 @@ use App\Models\Domain;
 use App\Models\Email;
 use App\Models\HunterData;
 use App\Models\LastPersonChecked;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class Hunter extends Controller
 {
@@ -31,15 +33,18 @@ class Hunter extends Controller
 
     public function domainSearch($searchTerm)
     {
-        do {
-            $response = $this->client->request('GET', 'v2/domain-search', [
-                'query' => [
-                    'domain' => $searchTerm,
-                    'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
-                ]
-            ]);
-        } while ($response->getStatusCode() !== 200);
-
+        try {
+            do {
+                $response = $this->client->request('GET', 'v2/domain-search', [
+                    'query' => [
+                        'domain' => $searchTerm,
+                        'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
+                    ]
+                ]);
+            } while ($response->getStatusCode() !== 200);
+        } catch (Exception $e) {
+            $this->message = ['fail', 'Se encontraron problemas con el dominio o los datos ingresados'];
+        }
         $json = json_decode($response->getBody()->getContents(), true);
         $this->searchResults = $json['data']['emails'];
     }
@@ -73,16 +78,22 @@ class Hunter extends Controller
 
     public function personSearch($searchTerm, Request $request, $domainID)
     {
-        do {
-            $response = $this->client->request('GET', 'v2/email-finder', [
-                'query' => [
-                    'domain' => $searchTerm,
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
-                ]
-            ]);
-        } while ($response->getStatusCode() !== 200);
+
+        try {
+            do {
+                $response = $this->client->request('GET', 'v2/email-finder', [
+                    'query' => [
+                        'domain' => $searchTerm,
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
+                    ]
+                ]);
+            } while ($response->getStatusCode() !== 200);
+        } catch (Exception $e) {
+            $this->message = ['fail', 'Se encontraron problemas con el dominio o los datos ingresados'];
+            return;
+        }
 
         $json = json_decode($response->getBody()->getContents(), true);
         $personResults = $json['data'];
@@ -104,6 +115,7 @@ class Hunter extends Controller
         $person->sources = $sources;
 
         $person->save();
+        $this->message = ['success', 'Persona encontrada.'];
     }
 
     public function storePerson(Domain $domain)
@@ -153,47 +165,4 @@ class Hunter extends Controller
             return redirect("/domains/$hunterData->domain_id")->with('hunter-asociate-message', 'fail');
         }
     }
-
-    // public function getResults()
-    // {
-    //     do {
-    //         $response = $this->client->request('GET', 'b', [
-    //             'query' => [
-    //                 'id' => $this->searchID
-    //             ]
-    //         ]);
-
-    //         $json = json_decode($response->getBody()->getContents(), true);
-    //     } while ($json['status'] !== 1);
-
-    //     $this->searchResults = $json['records'];
-    // }
-
-
-    // public function storeResults($owner)
-    // {
-    //     foreach ($this->searchResults as $searchResult) {
-
-    //         $dataCheck = IntelxData::where('systemid', $searchResult['systemid'])
-    //             ->first();
-
-    //         if ($dataCheck === null) {
-    //             $intelxData = new IntelxData();
-    //             $intelxData->systemid = $searchResult['systemid'];
-    //             $intelxData->storageid = $searchResult['storageid'];
-    //             $intelxData->instore = $searchResult['instore'];
-    //             $intelxData->type = $searchResult['type'];
-    //             $intelxData->media = $searchResult['media'];
-    //             $intelxData->added = $searchResult['added'];
-    //             $intelxData->name = $searchResult['name'];
-    //             $intelxData->bucket = $searchResult['bucket'];
-    //             if ($owner->getTable() === "emails") {
-    //                 $intelxData->email_id = $owner->id;
-    //             } else {
-    //                 $intelxData->domain_id = $owner->id;
-    //             }
-    //             $intelxData->save();
-    //         }
-    //     }
-    // }
 }
