@@ -65,6 +65,7 @@ class HunterController extends Controller
                 $hunterData->verified = $email['verification']['status'];
                 $hunterData->confidence = $email['confidence'];
                 $hunterData->sources = $sources;
+                $hunterData->user_id = Auth::id();
                 $hunterData->domain_id = $domain->id;
                 $hunterData->save();
             }
@@ -128,6 +129,7 @@ class HunterController extends Controller
             $hunterData->verified = $lastFromThisDomain['verified'];
             $hunterData->confidence = $lastFromThisDomain['confidence'];
             $hunterData->sources = $lastFromThisDomain['sources'];
+            $hunterData->user_id = Auth::id();
             $hunterData->domain_id = $domain->id;
             $hunterData->save();
             $lastFromThisDomain->delete();

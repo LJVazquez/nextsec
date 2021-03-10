@@ -13,11 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 class DomainController extends Controller
 {
-    // public function index()
-    // {
-    //     return view('domain.index', ['domains' => Domain::all()]);
-    // }
-
     public function create()
     {
         return view('domain.create');
@@ -25,22 +20,26 @@ class DomainController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required'
+        ]);
+
         $check = Domain::where('name', $request->name)->first();
-        if ($check) {
-            if ($check->name === $request->name) {
-                return redirect('domains/create')->with('create-error', "$request->name ya se encuentra en su base de datos.");
-            }
+        if ($check && $check->user->id === Auth::id()) {
+            return redirect('domains/create')->with('create-error', "$request->name ya se encuentra en su base de datos.");
         }
 
         $domain = new Domain;
         $domain->name = $request->name;
         $domain->user_id = Auth::id();
         $domain->save();
-        return redirect('/domains');
+        return redirect('/');
     }
 
     public function show(Domain $domain)
     {
+        $this->authorize('author', $domain);
+
         $intelxData = $domain->intelx->sortBy('updated_at');
         $hunterData = $domain->hunterDomains->sortBy('updated_at');
         $person = LastPersonChecked::where('domain_id', $domain->id)->first();
@@ -62,11 +61,11 @@ class DomainController extends Controller
 
     public function update(Request $request, Domain $domain)
     {
+        $this->authorize('author', $domain);
+
         $check = Domain::where('name', $request->name)->first();
-        if ($check) {
-            if ($check->name === $request->name) {
-                return redirect("domains/$domain->id/edit")->with('update-error', "$request->name ya se encuentra en su base de datos.");
-            }
+        if ($check && $check->user->id === Auth::id()) {
+            return redirect("domains/$domain->id/edit")->with('update-error', "$request->name ya se encuentra en su base de datos.");
         }
 
         $domain->name = $request->name;
@@ -76,7 +75,7 @@ class DomainController extends Controller
 
     public function destroy(Domain $domain)
     {
-        $this->authorize('delete', $domain);
+        $this->authorize('author', $domain);
 
         Domain::destroy($domain->id);
 
@@ -85,6 +84,7 @@ class DomainController extends Controller
 
     public function intelxSearch(Domain $domain)
     {
+        $this->authorize('author', $domain);
         $searchTerm = htmlspecialchars($domain->name);
         $previousCount = IntelxData::where('domain_id', $domain->id)->count();
 
@@ -104,6 +104,7 @@ class DomainController extends Controller
 
     public function hunterDomainSearch(Domain $domain)
     {
+        $this->authorize('author', $domain);
 
         $previousCount = hunterData::where('domain_id', $domain->id)->count();
 
@@ -124,6 +125,8 @@ class DomainController extends Controller
 
     public function hunterPersonSearch(Domain $domain, Request $request)
     {
+        $this->authorize('author', $domain);
+
         $hunter = new HunterController();
         $hunter->personSearch($domain->name, $request, $domain->id);
 
@@ -132,6 +135,8 @@ class DomainController extends Controller
 
     public function hunterSavePerson(Domain $domain)
     {
+        $this->authorize('author', $domain);
+
         $hunter = new HunterController();
         $hunter->storePerson($domain);
         return redirect("/domains/$domain->id")->with('person-message', $hunter->message);

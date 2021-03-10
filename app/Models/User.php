@@ -69,4 +69,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Email::class);
     }
+
+    public function intelxData()
+    {
+        return $this->hasMany(IntelxData::class);
+    }
+
+    public function hunterData()
+    {
+        return $this->hasMany(hunterData::class);
+    }
 }

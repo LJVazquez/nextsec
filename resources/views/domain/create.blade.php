@@ -10,7 +10,11 @@
             @csrf
             <div class="form-group">
                 <label for="name">Nombre del dominio:</label>
-                <input class="form-control" type="text" name="name" id="name" placeholder="Ej. google.com" required>
+                <input class="form-control" type="text" name="name" id="name" value="{{ old('name') }}"
+                    placeholder="Ej. google.com" required>
+                @error('name')
+                    <p class="text-danger">{{ $errors->first('name') }}</p>
+                @enderror
             </div>
             <button class="btn btn-primary mt-1" type="submit">Crear</button>
             <a href="/" onClick="return confirm('¿Volver y cancelar cambios?')" class="btn btn-danger mt-1">Cancelar</a>

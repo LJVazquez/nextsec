@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class EmailController extends Controller
 {
-    // public function index()
-    // {
-    //     return view('email.index', ['emails' => Email::all()]);
-    // }
-
     public function create()
     {
         $domains = Domain::where('user_id', Auth::id())->get();
@@ -25,12 +20,16 @@ class EmailController extends Controller
     public function store(Request $request)
     {
         $check = Email::where('name', $request->name)->first();
-
-        if ($check) {
-            if ($check->name === $request->name) {
-                return redirect('emails/create')->with('create-error', "$request->name ya se encuentra en su base de datos.");
-            }
+        if ($check && $check->user->id === Auth::id()) {
+            return redirect('emails/create')->with('create-error', "$request->name ya se encuentra en su base de datos.");
         }
+
+        $request->validate([
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
+            'name' => 'required|email',
+            'domain' => 'nullable|integer'
+        ]);
 
         $email = new Email;
         if ($request->use_user) {
@@ -40,7 +39,7 @@ class EmailController extends Controller
             $email->first_name = $request->first_name;
             $email->last_name = $request->last_name;
         }
-        if ($request->domain !== 'none') $email->domain_id = $request->domain;
+        $email->domain_id = $request->domain;
         $email->name = $request->name;
         $email->user_id = Auth::id();
         $email->save();
@@ -50,6 +49,8 @@ class EmailController extends Controller
 
     public function show(Email $email)
     {
+        $this->authorize('author', $email);
+
         $intelxdata = IntelxData::where('email_id', $email->id)
             ->orderBy('updated_at')
             ->get();
@@ -68,6 +69,15 @@ class EmailController extends Controller
 
     public function update(Request $request, Email $email)
     {
+
+        $this->authorize('author', $email);
+
+        $request->validate([
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
+            'domain' => 'nullable|integer'
+        ]);
+
         $email->first_name = $request->first_name;
         $email->last_name = $request->last_name;
         $email->domain_id = $request->domain;
@@ -77,7 +87,7 @@ class EmailController extends Controller
 
     public function destroy(Email $email)
     {
-        $this->authorize('delete', $email);
+        $this->authorize('author', $email);
 
         Email::destroy($email->id);
 
@@ -86,6 +96,8 @@ class EmailController extends Controller
 
     public function intelxSearch(Email $email)
     {
+        $this->authorize('author', $email);
+
         $searchTerm = htmlspecialchars($email->name);
         $previousCount = IntelxData::where('email_id', $email->id)->count();
 

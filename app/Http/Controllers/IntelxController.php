@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\IntelxData;
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 
 class IntelxController
 {
@@ -75,6 +76,7 @@ class IntelxController
                 $intelxData->added = $searchResult['added'];
                 $intelxData->name = $searchResult['name'];
                 $intelxData->bucket = $searchResult['bucket'];
+                $intelxData->user_id = Auth::id();
                 if ($owner->getTable() === "emails") {
                     $intelxData->email_id = $owner->id;
                 } else {

@@ -3,7 +3,7 @@
 @section('css')
     <link rel="stylesheet"
         href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css
-                                                                                                                                                                                                                                                                                                                    ">
+                                                                                                                                                                                                                                                                                                                                    ">
 @endsection
 
 @section('content')
@@ -61,15 +61,9 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{-- @can('delete', $email)
-                        <form method="post" action="/emails/{{ $email->id }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger mt-1">Borrar email</button>
-                        </form>
-                    @endcan --}}
                 </div>
-                <form action="/emails/{{ $email->id }}" method="post">
+
+                <form action="/intelxmail/{{ $email->id }}" method="post">
                     @csrf
 
                     <button class="btn btn-primary " type="submit">Actualizar busqueda</button>

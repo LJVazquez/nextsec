@@ -15,6 +15,9 @@
                 <label for="name">Nombre del dominio:</label>
                 <input class="form-control" type="text" name="name" id="name" value="{{ $domain->name }}"
                     placeholder="Ej. google.com" required>
+                @error('name')
+                    <p class="text-danger">{{ $errors->first('name') }}</p>
+                @enderror
             </div>
             <div class="form-group">
                 <button class="btn btn-primary mt-1" type="submit">Actualizar</button>

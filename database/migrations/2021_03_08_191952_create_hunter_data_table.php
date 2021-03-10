@@ -21,8 +21,14 @@ class CreateHunterDataTable extends Migration
             $table->string('verified')->nullable();
             $table->integer('confidence')->nullable();
             $table->text('sources')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('domain_id');
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
 
             $table->foreign('domain_id')
                 ->references('id')

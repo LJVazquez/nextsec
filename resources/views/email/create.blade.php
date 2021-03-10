@@ -17,21 +17,29 @@
 
             <div class="form-group ">
                 <label for="first_name">Nombre:</label>
-                <input class="form-control full_name" type="text" name="first_name" id="first_name" placeholder="Juan">
+                <input class="form-control full_name" type="text" name="first_name" id="first_name"
+                    value="{{ old('first_name') }}" placeholder="Juan">
             </div>
+
             <div class="form-group">
                 <label for="last_name">Apellido:</label>
-                <input class="form-control full_name" type="text" name="last_name" id="last_name" placeholder="Perez">
+                <input class="form-control full_name" type="text" name="last_name" id="last_name"
+                    value="{{ old('last_name') }}" placeholder="Perez">
             </div>
+
             <div class="form-group">
                 <label for="name">Email:</label>
-                <input class="form-control" type="text" name="name" id="name" placeholder="Ej. contacto" required>
+                <input class="form-control" type="email" name="name" id="name" value="{{ old('name') }}"
+                    placeholder="Ej. contacto" required>
+                @error('name')
+                    <p class="text-danger">{{ $errors->first('name') }}</p>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="domain">Asociar email a dominio:</label>
                 <select id="domain" class="form-control" name="domain">
-                    <option value="none">Ninguno</option>
+                    <option></option>
                     @foreach ($domains as $domain)
                         <option value={{ $domain->id }}>{{ $domain->name }}</option>
                     @endforeach
