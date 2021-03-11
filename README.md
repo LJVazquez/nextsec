@@ -9,6 +9,7 @@ NextSecApp es un gestor de emails y dominios donde puedes buscar si tus datos fu
 -   Busqueda de filtraciones de datos (contraseñas, tarjetas de credito, datos personales sensibles, etc) que incluyan el dominio o email:
 -   Preview al archivo donde se encontró el leak de información.
 -   Guardado de busquedas en base de datos local (Las APIs utilizadas trabajan con peticiones que expiran al poco tiempo).
+-   Sistema de login, autenticacion y autorizacion para el CRUD.
 
 ## Pre requisitos
 
