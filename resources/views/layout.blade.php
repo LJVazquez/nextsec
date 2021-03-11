@@ -13,9 +13,13 @@
             background-color: #08FFBE;
         }
 
+        .bg-green-soft {
+            background-color: #abf7e3;
+        }
+
     </style>
 
-    <title>NextSect</title>
+    <title>NextSecApp</title>
 </head>
 
 <body>
