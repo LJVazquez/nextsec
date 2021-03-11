@@ -81,4 +81,4 @@ Una vez dentro de la gestion del dominio o email pueden utilizarse las herramien
 
 ## Licencia
 
-Este es un proyecto personal y esta licenciado bajo la licencia MIT - Ver el archivo [LICENSE.md](LICENSE.md) para mas detalles.
+Este es un proyecto personal y esta licenciado bajo la licencia MIT - Ver el archivo [LICENSE.txt](LICENSE.txt) para mas detalles.
