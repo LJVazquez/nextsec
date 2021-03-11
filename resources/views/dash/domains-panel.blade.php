@@ -13,7 +13,7 @@
 
         @endif
 
-        <div class="table-fluid">
+        <div class="table-responsive">
             <table class="table table-bordered border bg-white mt-2">
                 <thead class="bg-green-soft">
                     <tr>

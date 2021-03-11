@@ -20,7 +20,7 @@ class IntelxController
             'base_uri' => 'https://2.intelx.io',
             // 'timeout'  => 2.0,
             'headers' => [
-                'x-key' => '286e33d3-a161-4ceb-8160-7d759bbd78bc'
+                'x-key' => $_ENV['INTELX_KEY']
             ]
         ]);
     }

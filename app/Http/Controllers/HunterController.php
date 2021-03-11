@@ -33,7 +33,7 @@ class HunterController extends Controller
                 $response = $this->client->request('GET', 'v2/domain-search', [
                     'query' => [
                         'domain' => $searchTerm,
-                        'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
+                        'api_key' => $_ENV['HUNTERIO_KEY']
                     ]
                 ]);
             } while ($response->getStatusCode() !== 200);
@@ -82,7 +82,7 @@ class HunterController extends Controller
                         'domain' => $searchTerm,
                         'first_name' => $request->first_name,
                         'last_name' => $request->last_name,
-                        'api_key' => 'dcc032d6b9bce6f126d6bbd70a8fc5875e065d0a'
+                        'api_key' => $_ENV['HUNTERIO_KEY']
                     ]
                 ]);
             } while ($response->getStatusCode() !== 200);
