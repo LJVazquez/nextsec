@@ -33,7 +33,7 @@ class DomainController extends Controller
         $domain->name = $request->name;
         $domain->user_id = Auth::id();
         $domain->save();
-        return redirect('/');
+        return redirect('/')->with('domain-update', "Se ha creado $request->name");
     }
 
     public function show(Domain $domain)
@@ -79,7 +79,7 @@ class DomainController extends Controller
 
         Domain::destroy($domain->id);
 
-        return redirect('/')->with('domain-update', "$domain->name eliminado.");
+        return redirect('/')->with('domain-update', "Se ha eliminado $domain->name.");
     }
 
     public function intelxSearch(Domain $domain)

@@ -2,16 +2,16 @@
     <div class="row">
         <h3>Busqueda de emails en el dominio</h3>
         @if (session('domain-count'))
-            <p class="text-success">{{ session('domain-count') }}</p>
+            <p class="badge bg-success">{{ session('domain-count') }}</p>
         @endif
         @if (session('hunter-delete-message'))
-            <p class="text-success">{{ session('hunter-delete-message') }}</p>
+            <p class="badge bg-success">{{ session('hunter-delete-message') }}</p>
         @endif
         @if (session('hunter-asociate-message') === 'success')
-            <p class="text-success">Email asociado con exito.</p>
+            <p class="badge bg-success">Email asociado con exito.</p>
         @endif
         @if (session('hunter-asociate-message') === 'fail')
-            <p class="text-danger">Email ya asociado.</p>
+            <p class="badge bg-danger">Email ya asociado.</p>
         @endif
         <div class="table-responsive">
             <table id="hunter-domain-results" class="table border bg-white mt-2">

@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label for="domain">Asociar email a dominio:</label>
                 <select id="domain" class="form-control" name="domain">
-                    <option>Ninguno</option>
+                    <option></option>
                     @foreach ($domains as $domain)
                         @if ($domain->id === $email->domain_id)
                             <option selected="selected" value={{ $domain->id }}>{{ $domain->name }}</option>

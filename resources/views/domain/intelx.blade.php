@@ -4,11 +4,11 @@
         <p class="fw-lighter">Usando modalidad preview por limitaciones de la API free</p>
         @if (session('intelx-search-msg'))
             @if (session('intelx-search-msg')['status'] === 'success')
-                <p class="text-success">
+                <p class="badge bg-success">
                     {{ session('intelx-search-msg')['msg'] . session('intelx-search-msg')['props'] }}
                 </p>
             @elseif ((session('intelx-search-msg')['status'] === 'fail'))
-                <p class="text-danger">{{ session('intelx-search-mgs')['msg'] }}</p>
+                <p class="badge bg-danger">{{ session('intelx-search-mgs')['msg'] }}</p>
             @endif
         @endif
         <div class="table-responsive">

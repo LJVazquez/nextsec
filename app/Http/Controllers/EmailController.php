@@ -44,7 +44,7 @@ class EmailController extends Controller
         $email->user_id = Auth::id();
         $email->save();
 
-        return redirect('/')->with('email-update', "$request->name se ha creado.");
+        return redirect('/')->with('email-update', "Se ha creado $request->name.");
     }
 
     public function show(Email $email)
@@ -69,7 +69,6 @@ class EmailController extends Controller
 
     public function update(Request $request, Email $email)
     {
-
         $this->authorize('author', $email);
 
         $request->validate([
@@ -82,7 +81,7 @@ class EmailController extends Controller
         $email->last_name = $request->last_name;
         $email->domain_id = $request->domain;
         $email->save();
-        return redirect('/')->with('email-update', "$email->name se ha actualizado.");
+        return redirect('/')->with('email-update', "se ha actualizado $email->name.");
     }
 
     public function destroy(Email $email)
@@ -91,7 +90,7 @@ class EmailController extends Controller
 
         Email::destroy($email->id);
 
-        return redirect('/')->with('email-update', "$email->name se ha eliminado.");
+        return redirect('/')->with('email-update', "se ha eliminado $email->name.");
     }
 
     public function intelxSearch(Email $email)

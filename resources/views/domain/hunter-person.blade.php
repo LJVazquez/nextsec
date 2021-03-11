@@ -4,9 +4,9 @@
         <h4>Busqueda de email por datos personales</h4>
         @if (session('search-person'))
             @if (session('search-person')[0] === 'success')
-                <p class="text-success">{{ session('search-person')[1] }}</p>
+                <p class="badge bg-success">{{ session('search-person')[1] }}</p>
             @else
-                <p class="text-danger">{{ session('search-person')[1] }}</p>
+                <p class="badge bg-danger">{{ session('search-person')[1] }}</p>
             @endif
         @endif
         <form method="post" action="/person-search/{{ $domain->id }}">
@@ -67,7 +67,7 @@
                             </form>
                         </td>
                         @if (session('person-message'))
-                            <p class="text-danger">{{ session('person-message') }}</p>
+                            <p class="badge bg-danger">{{ session('person-message') }}</p>
                         @endif
                     </tbody>
                 </table>

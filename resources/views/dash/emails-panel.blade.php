@@ -8,7 +8,7 @@
         @if (session('email-update'))
 
             <div class="col-12">
-                <p class="text-success">{{ session('email-update') }}</p>
+                <p class="badge bg-success">{{ session('email-update') }}</p>
             </div>
 
         @endif
