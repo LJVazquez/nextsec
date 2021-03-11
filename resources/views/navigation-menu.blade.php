@@ -6,7 +6,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <p>asd</p>
+                    <p>NextSecApp</p>
                 </div>
 
             </div>

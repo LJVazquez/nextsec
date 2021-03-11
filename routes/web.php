@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
 
-Route::get('/', 'App\Http\Controllers\UserController@dash');
+Route::get('/', 'App\Http\Controllers\UserController@dash')->name('dashboard');
 
 //? Controladores de DB
 Route::resource('/users', 'App\Http\Controllers\UserController');
