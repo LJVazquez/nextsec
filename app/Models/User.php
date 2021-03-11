@@ -25,6 +25,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
     ];
@@ -58,4 +59,24 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function domains()
+    {
+        return $this->hasMany(Domain::class);
+    }
+
+    public function emails()
+    {
+        return $this->hasMany(Email::class);
+    }
+
+    public function intelxData()
+    {
+        return $this->hasMany(IntelxData::class);
+    }
+
+    public function hunterData()
+    {
+        return $this->hasMany(hunterData::class);
+    }
 }
