@@ -100,25 +100,6 @@ class IntelxController
             ]
         ]);
 
-        // // ? view
-        // $response = $this->client->request('GET', 'file/view', [
-        //     'query' => [
-        //         'f' => 0,
-        //         'storageid' => $file->storageid,
-        //         'bucket' => $file->bucket, //opcional
-        //     ]
-        // ]);
-
-        // // ? read
-        // $response = $this->client->request('GET', 'file/read', [
-        //     'query' => [
-        //         'type' => 0, //0 raw binary, 1 raw con disposicion opcional
-        //         'storageid' => $file->storageid,
-        //         'systemid' => $file->systemid,
-        //         'bucket' => $file->bucket, //opcional
-        //     ]
-        // ]);
-
         return $response->getBody()->getContents();
     }
 }
